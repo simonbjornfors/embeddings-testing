@@ -1,4 +1,4 @@
-import { compareTexts } from "$lib/server/e5-small-v2";
+import { compareTexts } from "$lib/server/openai-ada-2";
 
 export async function POST({ request }) {
   const body = JSON.parse(await request.text());

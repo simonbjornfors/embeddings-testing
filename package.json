@@ -25,6 +25,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@huggingface/inference": "^2.6.1"
+    "@huggingface/inference": "^2.6.1",
+    "openai": "^4.10.0"
   }
 }
