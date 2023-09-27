@@ -4,15 +4,16 @@
     let similarity = 0
     let loading = false
     let speed = 0;
+    let model = "e5-small-v2"
     const handleCompare = async () => {
         loading = true;
         let start = performance.now()
-        const res = await fetch("/api/e5-small-v2", {
+        const res = await fetch("/api/huggingface-model", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text1, text2})
+            body: JSON.stringify({text1, text2, model})
         })
         const data = await res.json()
         similarity = data.similarity

@@ -1,5 +1,5 @@
 import { getEmbedding as getEmbeddingOpenaiAda2 }  from "$lib/server/openai-ada-2";
-import { getEmbedding as getEmbeddingHuggingface }  from "$lib/server/e5-small-v2";
+import { getEmbedding as getEmbeddingHuggingface }  from "$lib/server/huggingface-models";
 
 export async function POST({ request }): Promise<Response> {
     const body = JSON.parse(await request.text());

@@ -5,13 +5,13 @@ import { is1DArray } from '$lib/utils';
 
 const hf = new HfInference(HF_TOKEN);
 
-export async function compareTexts(text1: string, text2:string ): Promise<number> {
+export async function compareTexts(text1: string, text2:string, model:string ): Promise<number> {
 const output1 = await hf.featureExtraction({
-    model: "intfloat/e5-small-v2",
+    model: "intfloat/" + model,
     inputs: text1,
 })
 const output2 = await hf.featureExtraction({
-    model: "intfloat/e5-small-v2",
+    model: "intfloat/" + model,
     inputs: text2,
 })
 let similarity = 0;
