@@ -1,30 +1,30 @@
 import { getEmbedding as getEmbeddingOpenaiAda2 }  from "$lib/server/openai-ada-2";
-import { getEmbedding as getEmbeddingE5SmallV2 }  from "$lib/server/e5-small-v2";
+import { getEmbedding as getEmbeddingHuggingface }  from "$lib/server/e5-small-v2";
 
-export async function POST({ request }) {
+export async function POST({ request }): Promise<Response> {
     const body = JSON.parse(await request.text());
     const text = body.text;
-    const adaStart = performance.now();
-    const embeddingOpenaiAda2 = await getEmbeddingOpenaiAda2(text);
-    const adaEnd = performance.now();
-    const e5Start = performance.now();
-    const embeddingE5SmallV2 = await getEmbeddingE5SmallV2(text);
-    const e5End = performance.now();
-    console.log(`Ada took ${adaEnd - adaStart} ms`);
-    console.log(`E5 took ${e5End - e5Start} ms`);
-    const adaTime = adaEnd - adaStart;
-    const e5Time = e5End - e5Start;
-    const res = {
-        ada: {
-            time: adaTime,
-            embedding: embeddingOpenaiAda2
-        },
-        e5: {
-            time: e5Time,
-            embedding: embeddingE5SmallV2
+    const models = body.models;
+    console.log(text);
+    console.log(models);
+    for(let model of models){
+        console.log(model)
+        if(model.includeModel){
+            console.log(model.modelName);
+            const start = performance.now();
+           const embedding = model.modelName === "text-embedding-ada-002" ? await getEmbeddingOpenaiAda2(text) : await getEmbeddingHuggingface(text, model.modelName);
+           const end = performance.now();
+           console.log(`${model.modelName} took ${end - start} milliseconds.`);
+           model.time = end - start;
+           model.embedding = embedding;
         }
     }
-    return new Response(JSON.stringify(res), {
-        headers: { "content-type": "application/json" },
+    return new Response(JSON.stringify(models), {
+        headers: {
+            "content-type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST",
+            "Access-Control-Allow-Headers": "Content-Type"
+        }
     });
     }

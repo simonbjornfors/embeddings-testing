@@ -22,9 +22,9 @@ similarity = dotProduct(output1, output2);
 return similarity;
 }
 
-export async function getEmbedding(text:string): Promise<number[]> {
+export async function getEmbedding(text:string, model:string): Promise<number[]> {
 const embeddingResponse = await hf.featureExtraction({
-    model: "intfloat/e5-small-v2",
+    model: "intfloat/" + model,
     inputs: text,
 })
 if(is1DArray(embeddingResponse))return embeddingResponse;
