@@ -4,7 +4,7 @@
     let similarity = 0
     let loading = false
     let speed = 0;
-    let model = "e5-small-v2"
+    let model = "intfloat/e5-small-v2"
     const handleCompare = async () => {
         loading = true;
         let start = performance.now()
@@ -23,6 +23,7 @@
 </script>
 <div class="flex flex-col w-[90%] h-screen items-center gap-3 mx-auto mt-3">
     <h1 class="text-xl font-bold">Compare text similarity using e5-small-v2</h1>
+    <p>Embeddings are compared using <a class="link" href="https://developers.google.com/machine-learning/clustering/similarity/measuring-similarity#choosing-a-similarity-measure">Dot Product</a></p>
     <div class="flex flex-row gap-3">
         <input type="text" class="input input-bordered" bind:value={text1} placeholder="Text 1">
         <input type="text" class="input input-bordered" bind:value={text2} placeholder="Text 2">
