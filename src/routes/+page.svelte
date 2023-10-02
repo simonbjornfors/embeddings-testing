@@ -61,8 +61,8 @@
         
     </div>
     <div class="flex flex-row gap-3">
-        <button class="btn btn-primary" on:click={() => $models.forEach(model => model.includeModel = true)}>Select All</button>
-        <button class="btn btn-primary" on:click={() => $models.forEach(model => model.includeModel = false)}>Deselect All</button>
+        <button class="btn btn-success" on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>Select All</button>
+        <button class="btn btn-error" on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>Deselect All</button>
     </div>
     <div class="form-control w-full max-w-xs">
         <label for="embedding-text" class="label"><span class="label-text text-xs">Embedding Text</span></label>
