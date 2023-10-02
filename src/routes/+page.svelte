@@ -61,14 +61,13 @@
         
     </div>
     <div class="flex flex-row gap-3">
-        <button class="btn btn-success" on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>Select All</button>
-        <button class="btn btn-error" on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>Deselect All</button>
+        <button class="btn btn-primary" on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>Select All</button>
+        <button class="btn btn-secondary" on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>Deselect All</button>
     </div>
     <div class="form-control w-full max-w-xs">
         <label for="embedding-text" class="label"><span class="label-text text-xs">Embedding Text</span></label>
         <input id="embedding-text" type="text" class="input input-bordered" bind:value={text} placeholder="Ej specificerad protozosjukdom i tarmen">
     </div>
     <button class="btn btn-primary" on:click={speedTest}>Speed Test</button>
-<span class="loading loading-spinner loading-lg text-primary" class:hidden={!loading}></span>
 </div>
 
