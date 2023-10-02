@@ -1,102 +1,11 @@
 <script>
+    import {models} from "$lib/stores/models.ts"
     let loading = false;
     let text = ""
-    let models= [
-        {
-            includeModel: true,
-            time: null, 
-            name: "Ada-002",
-            embedding: null,
-            modelName: "text-embedding-ada-002"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "e5-small-v2",
-            embedding: null,
-            modelName:"intfloat/e5-small-v2"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "multilingual-e5-large",
-            embedding: null,
-            modelName:"intfloat/multilingual-e5-large"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "bge-large-en-v1.5",
-            embedding: null,
-            modelName:"BAAI/bge-large-en-v1.5"
-        }
-        ,
-        {
-            includeModel:true,
-            time: null, 
-            name: "bge-large-en",
-            embedding: null,
-            modelName:"barisaydin/bge-large-en"
-        }
-        ,
-        {
-            includeModel:true,
-            time: null, 
-            name: "bge-base-en-v1.5",
-            embedding: null,
-            modelName:"BAAI/bge-base-en-v1.5"
-        }
-        ,
-        {
-            includeModel:true,
-            time: null, 
-            name: "bge-base-en",
-            embedding: null,
-            modelName:"barisaydin/bge-base-en"
-        }
-        ,
-        {
-            includeModel:true,
-            time: null, 
-            name: "gte-base",
-            embedding: null,
-            modelName:"barisaydin/gte-base"
-        }
-        ,
-        {
-            includeModel:true,
-            time: null, 
-            name: "gte-large",
-            embedding: null,
-            modelName:"barisaydin/gte-large"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "bge-small-en-v1.5",
-            embedding: null,
-            modelName:"BAAI/bge-small-en-v1.5"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "multilingual-e5-base",
-            embedding: null,
-            modelName:"intfloat/multilingual-e5-base"
-        },
-        {
-            includeModel:true,
-            time: null, 
-            name: "all-MiniLM-L6-v2",
-            embedding: null,
-            modelName:"Xenova/all-MiniLM-L6-v2"
-        }
-
-    ]
 
     async function speedTest() {
         try{
-        if(models.filter(model => model.includeModel).length === 0) {
+        if($models.filter(model => model.includeModel).length === 0) {
             alert("Please select at least one model")
             return
         } 
@@ -106,28 +15,34 @@
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({text: text !== "" ? text : "Ej specificerad protozosjukdom i tarmen", models: models})
+        body: JSON.stringify({text: text !== "" ? text : "Ej specificerad protozosjukdom i tarmen", models: $models})
         }
         )
         const data = await res.json()
         console.log(data)
-        models = data
+        let updatedModels = $models.map(m => {
+        let foundModel = data.find(d => d.name === m.name);
+        if (foundModel) {
+                m.time = foundModel.time;
+            }
+            return m;
+        });
+        $models = updatedModels;
         loading = false}
         catch(err) {
             loading = false
             console.log(err)
             alert(err)
         }finally {
-            loading = false
+            loading = false;
         }
     }
-
 </script>
 <div class="flex flex-col items-center gap-3 h-full">
     <h1 class="text-xl font-bold">Speed Test</h1>
     <p>Test how long different models take to create an embedding</p>
     <div class="flex flex-col h-1/2 flex-wrap gap-3">
-        {#each models as model}
+        {#each $models as model}
         <div class="flex flex-col gap-1">
 
             <div class="flex flex-row justify-between items-center mx-2">
@@ -145,7 +60,14 @@
         {/each}
         
     </div>
-    <input type="text" class="input input-bordered" bind:value={text} placeholder="Text">
+    <div class="flex flex-row gap-3">
+        <button class="btn btn-primary" on:click={() => $models.forEach(model => model.includeModel = true)}>Select All</button>
+        <button class="btn btn-primary" on:click={() => $models.forEach(model => model.includeModel = false)}>Deselect All</button>
+    </div>
+    <div class="form-control w-full max-w-xs">
+        <label for="embedding-text" class="label"><span class="label-text text-xs">Embedding Text</span></label>
+        <input id="embedding-text" type="text" class="input input-bordered" bind:value={text} placeholder="Ej specificerad protozosjukdom i tarmen">
+    </div>
     <button class="btn btn-primary" on:click={speedTest}>Speed Test</button>
 <span class="loading loading-spinner loading-lg text-primary" class:hidden={!loading}></span>
 </div>

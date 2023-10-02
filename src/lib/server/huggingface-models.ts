@@ -1,6 +1,6 @@
 import { HfInference } from '@huggingface/inference';
 import { HF_TOKEN } from '$env/static/private';
-import { dotProduct } from '$lib/utils';
+import { cosineSimilarity } from '$lib/utils';
 import { is1DArray } from '$lib/utils';
 
 const hf = new HfInference(HF_TOKEN);
@@ -17,7 +17,7 @@ const output2 = await hf.featureExtraction({
 let similarity = 0;
 if(is1DArray(output1) && is1DArray(output2)) {
     
-similarity = dotProduct(output1, output2);
+similarity = cosineSimilarity(output1, output2);
 }
 return similarity;
 }

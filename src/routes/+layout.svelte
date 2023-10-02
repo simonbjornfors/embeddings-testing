@@ -9,8 +9,8 @@
     </div>
     <div class="navbar-end">
       <ul class="menu menu-horizontal"> 
-        <li><a class="btn btn-ghost" href="/e5-small-v2">e5-small-v2</a></li>
-        <li><a class="btn btn-ghost" href="/openai-ada-002">OpenAi Ada 002</a></li>
+        <li><a class="btn btn-ghost" href="/">Speed Test</a></li>
+        <li><a class="btn btn-ghost" href="/text-comparison">Text Comparison</a></li>
       </ul>
     </div>
   </nav>

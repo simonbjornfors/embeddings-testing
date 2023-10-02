@@ -1,19 +1,20 @@
 <script>
+    import {models} from "$lib/stores/models.ts"
+    let selectedModel = $models[0];
     let text1 = ""
     let text2 = ""
     let similarity = 0
     let loading = false
     let speed = 0;
-    let model = "intfloat/e5-small-v2"
     const handleCompare = async () => {
         loading = true;
         let start = performance.now()
-        const res = await fetch("/api/huggingface-model", {
+        const res = await fetch(`/api/${selectedModel.modelType}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text1, text2, model})
+            body: JSON.stringify({text1, text2, selectedModel: selectedModel.modelName, useQuantized: selectedModel.useQuantized ?? false})
         })
         const data = await res.json()
         similarity = data.similarity
@@ -22,8 +23,15 @@
     }
 </script>
 <div class="flex flex-col w-[90%] h-screen items-center gap-3 mx-auto mt-3">
-    <h1 class="text-xl font-bold">Compare text similarity using e5-small-v2</h1>
-    <p>Embeddings are compared using <a class="link" href="https://developers.google.com/machine-learning/clustering/similarity/measuring-similarity#choosing-a-similarity-measure">Dot Product</a></p>
+    <h1 class="text-xl font-bold">
+        Compare text similarity using 
+        <select class="select text-xl font-bold">
+            {#each $models as model}
+                <option value={model.modelName} on:click={()=>selectedModel=model}>{model.name}</option>
+            {/each}
+        </select>
+    </h1>
+    <p>Embeddings are compared using <a class="link" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
     <div class="flex flex-row gap-3">
         <input type="text" class="input input-bordered" bind:value={text1} placeholder="Text 1">
         <input type="text" class="input input-bordered" bind:value={text2} placeholder="Text 2">

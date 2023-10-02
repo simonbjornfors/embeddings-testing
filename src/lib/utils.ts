@@ -9,3 +9,10 @@ export function dotProduct(a: number[], b: number[]): number {
 export function is1DArray<T>(value: (T | T[] | T[][])[]): value is T[] {
     return !Array.isArray(value[0]);
 }
+export function magnitude(a: number[]): number {
+    return Math.sqrt(dotProduct(a, a));
+}
+export function cosineSimilarity(a: number[], b: number[]): number {
+    if(a.length !== b.length) throw new Error("Vectors must be of same length");
+    return dotProduct(a, b) / (magnitude(a) * magnitude(b));
+}

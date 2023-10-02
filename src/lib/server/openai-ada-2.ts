@@ -1,5 +1,5 @@
 import { OPENAI_API_KEY } from '$env/static/private';
-import { dotProduct } from '$lib/utils';
+import { cosineSimilarity } from '$lib/utils';
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -22,7 +22,7 @@ export async function compareTexts(text1: string, text2:string ): Promise<number
     console.log(output2)
 let similarity = 0;
 
-similarity = dotProduct(output1, output2);
+similarity = cosineSimilarity(output1, output2);
 
 return similarity;
 }

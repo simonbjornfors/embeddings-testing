@@ -12,7 +12,7 @@ export async function POST({ request }): Promise<Response> {
         console.log(model)
         if(model.includeModel){
             console.log(model.modelName);
-            if(model.modelName === "Xenova/all-MiniLM-L6-v2")
+            if(model.modelType === "onnx-model")
             {
                 const start = performance.now();
                 const embedding = await generateEmbeddings(text, model.modelName);
