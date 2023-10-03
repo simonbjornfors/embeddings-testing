@@ -7,6 +7,7 @@
     let loading = false
     let speed = 0;
     const handleCompare = async () => {
+        console.log(selectedModel)
         loading = true;
         let start = performance.now()
         const res = await fetch(`/api/${selectedModel.modelType}`, {
@@ -25,9 +26,9 @@
 <div class="flex flex-col w-[90%] h-screen items-center gap-3 mx-auto mt-3">
     <h1 class="text-xl font-bold">
         Compare text similarity using 
-        <select class="select text-xl font-bold">
+        <select class="select text-xl font-bold" bind:value={selectedModel}>
             {#each $models as model}
-                <option value={model.modelName} on:click={()=>selectedModel=model}>{model.name}</option>
+                <option value={model}>{model.name}</option>
             {/each}
         </select>
     </h1>
