@@ -78,7 +78,7 @@
             </select>
         </div>
         <button class="btn btn-primary btn-sm" on:click={similarityTest}>Run Test</button>
-        <div class="radial-progress text-primary absolute right-3 {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
+        <div class="radial-progress text-primary absolute right-6 {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
     </div>
     <div class="flex flex-row justify-between mx-3 w-full">
         <div class="flex flex-row gap-3 ml-3">
@@ -87,7 +87,7 @@
         </div>
     </div>
     <div class="w-full">
-        <table class="table table-zebra">
+        <table class="table">
             <thead>
                 <tr>
                   <th class="w-1/6"></th>
@@ -98,7 +98,7 @@
               </thead>
               <tbody>
                 {#each $models as model, i}
-                <tr class="{activeModel === model.name ? "active" : ""}">
+                <tr class="{activeModel === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
                   <td><input class="checkbox checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel}></td>
                   <td>{model.name}</td>
                   <td>{model.similarity ?? ""}</td>
