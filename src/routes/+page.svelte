@@ -41,10 +41,9 @@
 <div class="flex flex-col items-center gap-3 h-full">
     <h1 class="text-xl font-bold">Speed Test</h1>
     <p>Test how long different models take to create an embedding</p>
-    <div class="flex flex-col h-1/2 flex-wrap gap-3">
+    <div class="flex flex-col h-1/2 flex-wrap gap-3 w-[75%]">
         {#each $models as model}
         <div class="flex flex-col gap-1">
-
             <div class="flex flex-row justify-between items-center mx-2">
                 <label class="label" for={model.name}><span class="label-text text-xl font-bold">{model.name}</span></label>
                 <input class="checkbox checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel}>

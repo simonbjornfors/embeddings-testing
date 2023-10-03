@@ -109,7 +109,17 @@ export const models = writable([
                 name: "all-MiniLM-L6-v2-ONNX",
                 embedding: null,
                 modelName:"Xenova/all-MiniLM-L6-v2",
-                modelType: "onnx-model"
+                modelType: "onnx-model",
+                useQuantized: false
+                
+            },{
+                includeModel:true,
+                time: null, 
+                name: "all-MiniLM-L6-v2-ONNX-Quantized",
+                embedding: null,
+                modelName:"Xenova/all-MiniLM-L6-v2",
+                modelType: "onnx-model",
+                useQuantized: true
                 
             },
             {
