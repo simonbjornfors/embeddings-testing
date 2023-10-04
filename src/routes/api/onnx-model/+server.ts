@@ -9,6 +9,7 @@ export async function POST({ request }) {
   const model = body.model;
   const useQuantized = body.useQuantized;
   const similarity = await compareTexts(text1, text2, model, useQuantized);
+  console.log("similarity: ", similarity);
   return new Response(JSON.stringify({ similarity }), {
     headers: { "content-type": "application/json" },
   });
