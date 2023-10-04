@@ -70,7 +70,7 @@
         <div class="flex flex-col gap-1 w-1/3">
             <label for="embedding_text" class="label "><span class="label-text text-xs absolute">ICD10</span>
             </label>
-            <select class="select select-sm relative rounded" bind:value={selectedIcd10}>
+            <select class="select select-sm relative rounded" disabled={loading} bind:value={selectedIcd10}>
                 {#each data.icd10 as icd10}
                     <option value={icd10}>{icd10.title} {icd10.code}</option>
                 {/each}
@@ -87,13 +87,14 @@
 					placeholder="Search for ICD10"
 					class="w-full form-control input input-sm rounded relative"
 					bind:value={searchIcd10}
+                    disabled={loading}
 				/>
 				<button type="submit" disabled={loading} class="btn btn-sm btn-secondary">Search</button>
 			</form>
             <div class="flex flex-col">
                 <label for="embedding_text" class="label"><span class="label-text text-xs absolute">Search Phrase to compare</span>
                 </label>
-                <input id="embedding_text" type="text" class="input input-sm rounded relative" bind:value={text} placeholder="Ont i axeln">
+                <input id="embedding_text" type="text" class="input input-sm rounded relative" bind:value={text} placeholder="Ont i axeln" disabled={loading}>
             </div>
         </div>
         <button class="btn btn-primary btn-sm" disabled={loading} on:click={similarityTest}>Run Test</button>
