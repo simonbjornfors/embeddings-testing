@@ -88,7 +88,7 @@
 					class="w-full form-control input input-sm rounded relative"
 					bind:value={searchIcd10}
 				/>
-				<button type="submit" class="btn btn-sm btn-secondary">Search</button>
+				<button type="submit" disabled={loading} class="btn btn-sm btn-secondary">Search</button>
 			</form>
             <div class="flex flex-col">
                 <label for="embedding_text" class="label"><span class="label-text text-xs absolute">Search Phrase to compare</span>
@@ -97,7 +97,7 @@
             </div>
         </div>
         <button class="btn btn-primary btn-sm" disabled={loading} on:click={similarityTest}>Run Test</button>
-        <div class="radial-progress text-primary absolute right-6 {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
+        <div class="radial-progress text-primary absolute {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
     </div>
     <div class="flex flex-row justify-between mx-3 w-full">
         <div class="flex flex-row gap-3 ml-3">
