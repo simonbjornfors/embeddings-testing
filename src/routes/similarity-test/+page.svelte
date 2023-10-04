@@ -1,12 +1,12 @@
 <script lang="ts">
     import {models} from "$lib/stores/models.ts"
-    export let data;
-    console.log(data)
-    let loading = false;
-    let text = ""
-    let selectedIcd10 = data.icd10[0]
+    export let data: {icd10:[{id:number, title:string, code:string}], search_icd10?:string, text?:string};
+    let loading: boolean = false;
+    let text: string = data.text ?? '';
+    let selectedIcd10:{id:number, title:string, code:string} = data.icd10[0]
     let activeModel: string;
-    let progress = 0;
+    let progress: number = 0;
+    let searchIcd10: string = data.search_icd10 ?? '';
 
     async function similarityTest() {
         try{
@@ -57,33 +57,52 @@
     }
     function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
+    }
+    async function submit(e: Event) {
+		searchIcd10 = e.target?.search_icd10.value ?? searchIcd10;
+		window.location = `?search_icd10=${searchIcd10}&text=${text}`;
+	}
 </script>
-<div class="flex flex-col items-center gap-3 h-full">
+<div class="flex flex-col items-center gap-3 h-full w-full">
     <h1 class="text-xl font-bold">Similarity Test</h1>
     <p>Compare similarity for search phrases accoriding to each model</p>
-    <div class="form-control w-full max-w-xs flex-row gap-3 justify-center items-center text-center">
-        <div class="flex flex-col">
-            <label for="embedding-text" class="label "><span class="label-text text-xs absolute">Search Phrase</span>
+    <div class="form-control w-full flex-col gap-3 justify-center items-center text-center">
+        <div class="flex flex-col gap-1 w-1/3">
+            <label for="embedding_text" class="label "><span class="label-text text-xs absolute">ICD10</span>
             </label>
-            <input id="embedding-text" type="text" class="input relative" bind:value={text} placeholder="Ont i axeln">
-        </div>
-        <div class="flex flex-col">
-            <label for="embedding-text" class="label "><span class="label-text text-xs absolute">ICD10</span>
-            </label>
-            <select class="select relative" bind:value={selectedIcd10}>
+            <select class="select select-sm relative rounded" bind:value={selectedIcd10}>
                 {#each data.icd10 as icd10}
-                    <option value={icd10}>{icd10.title}</option>
+                    <option value={icd10}>{icd10.title} {icd10.code}</option>
                 {/each}
             </select>
+            <form
+				class="flex flex-row gap-1 items-center"
+				action="/search"
+				on:submit|preventDefault={submit}
+			>
+				<input
+					name="search_icd10"
+                    id="search_icd10"
+					type="text"
+					placeholder="Search for ICD10"
+					class="w-full form-control input input-sm rounded relative"
+					bind:value={searchIcd10}
+				/>
+				<button type="submit" class="btn btn-sm btn-secondary">Search</button>
+			</form>
+            <div class="flex flex-col">
+                <label for="embedding_text" class="label"><span class="label-text text-xs absolute">Search Phrase to compare</span>
+                </label>
+                <input id="embedding_text" type="text" class="input input-sm rounded relative" bind:value={text} placeholder="Ont i axeln">
+            </div>
         </div>
-        <button class="btn btn-primary btn-sm" on:click={similarityTest}>Run Test</button>
+        <button class="btn btn-primary btn-sm" disabled={loading} on:click={similarityTest}>Run Test</button>
         <div class="radial-progress text-primary absolute right-6 {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
     </div>
     <div class="flex flex-row justify-between mx-3 w-full">
         <div class="flex flex-row gap-3 ml-3">
-            <button class="btn btn-xs btn-primary" on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>All</button>
-            <button class="btn btn-xs btn-secondary" on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>None</button>
+            <button class="btn btn-xs btn-primary" disabled={loading} on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>All</button>
+            <button class="btn btn-xs btn-secondary" disabled={loading} on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>None</button>
         </div>
     </div>
     <div class="w-full">
@@ -98,8 +117,8 @@
               </thead>
               <tbody>
                 {#each $models as model, i}
-                <tr class="{activeModel === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
-                  <td><input class="checkbox checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel}></td>
+                <tr class="text-xs {activeModel === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
+                  <td><input class="checkbox checkbox-xs checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel} disabled={loading}></td>
                   <td>{model.name}</td>
                   <td>{model.similarity ?? ""}</td>
                   <td>{model.time ?? ""} ms</td>
