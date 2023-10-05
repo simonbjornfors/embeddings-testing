@@ -6,6 +6,8 @@ export async function generateEmbeddings(
   model: string = "Xenova/all-MiniLM-L6-v2",
   useQuantized: boolean = false
 ) {
+  console.log("generateEmbeddings called");
+  console.log("text: ", text);
   const embeddingsModel = await pipeline("feature-extraction", model, {
     quantized: useQuantized,
   });
@@ -15,7 +17,8 @@ export async function generateEmbeddings(
     normalize: true,
   });
 
-  console.log(result);
+  console.log("results[0].data: ", result[0].data.length);
+  return result[0].data;
 }
 
 export async function compareTexts(
@@ -44,4 +47,17 @@ export async function compareTexts(
   similarity = cosineSimilarity(embedding1, embedding2);
 
   return similarity;
+}
+export async function computeSimilarityWithEmbedding(
+  embedding: number[],
+  text: string,
+  model: string,
+  useQuantized: boolean = false
+): Promise<number> {
+  console.log("computeSimilarityWithEmbedding called");
+  console.log("text: ", text);
+  const textEmbedding = await generateEmbeddings(text, model, useQuantized);
+  console.log("transformers textEmbedding: ", textEmbedding.length);
+  console.log("transformers embedding: ", embedding.length);
+  return cosineSimilarity(embedding, textEmbedding);
 }

@@ -38,3 +38,11 @@ export async function getEmbedding(
   if (is1DArray(embeddingResponse)) return embeddingResponse;
   return [];
 }
+export async function computeSimilarityWithEmbedding(
+  embedding: number[],
+  text: string,
+  model: string
+): Promise<number> {
+  const textEmbedding = await getEmbedding(text, model);
+  return cosineSimilarity(embedding, textEmbedding);
+}

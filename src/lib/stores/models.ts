@@ -9,6 +9,8 @@ export const models = writable([
     modelName: "text-embedding-ada-002",
     modelType: "openai-ada-2",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -18,6 +20,8 @@ export const models = writable([
     modelName: "intfloat/e5-small-v2",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -27,6 +31,8 @@ export const models = writable([
     modelName: "intfloat/multilingual-e5-large",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -36,6 +42,8 @@ export const models = writable([
     modelName: "BAAI/bge-large-en-v1.5",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -45,6 +53,8 @@ export const models = writable([
     modelName: "BAAI/bge-base-en-v1.5",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -54,6 +64,8 @@ export const models = writable([
     modelName: "barisaydin/gte-base",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -63,6 +75,8 @@ export const models = writable([
     modelName: "BAAI/bge-small-en-v1.5",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -72,6 +86,8 @@ export const models = writable([
     modelName: "intfloat/multilingual-e5-base",
     modelType: "huggingface-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -82,6 +98,8 @@ export const models = writable([
     modelType: "onnx-model",
     useQuantized: false,
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -92,6 +110,8 @@ export const models = writable([
     modelType: "onnx-model",
     useQuantized: true,
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
   {
     includeModel: true,
@@ -101,5 +121,7 @@ export const models = writable([
     modelName: "barisaydin/gte-base",
     modelType: "onnx-model",
     similarity: null,
+    synonyms: [],
+    averageTime: null,
   },
 ]);
