@@ -158,8 +158,8 @@
                 <tr class="text-xs {activeModel === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
                   <td><input class="checkbox checkbox-xs checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel} disabled={loading}></td>
                   <td>{model.name}</td>
-                  <td>{model.time ? model.time + "ms" : ""}</td>
-                  <td>{model.time ? model.averageTime + "ms" : ""}</td>
+                  <td>{model.time ? model.time + " ms" : ""}</td>
+                  <td>{model.time ? model.averageTime + " ms" : ""}</td>
                   <td>{model.similarity ?? ""}</td>
                   <td>{model.synonyms[0] ?? ""}</td>
                   <td>{model.synonyms[1]  ?? ""}</td>
