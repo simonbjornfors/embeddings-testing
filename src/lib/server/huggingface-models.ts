@@ -10,15 +10,9 @@ export async function compareTexts(
   text2: string,
   model: string
 ): Promise<number> {
-  const output1 = await hf.featureExtraction({
-    model: model,
-    inputs: text1,
-  });
+  const output1: number[] = await getEmbedding(text1, model);
   console.log("output1: ", output1);
-  const output2 = await hf.featureExtraction({
-    model: model,
-    inputs: text2,
-  });
+  const output2: number[] = await getEmbedding(text2, model);
   console.log("output2: ", output2);
   let similarity = 0;
   if (is1DArray(output1) && is1DArray(output2)) {

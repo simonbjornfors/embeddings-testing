@@ -1,12 +1,11 @@
 <script lang="ts">
     import {models} from "$lib/stores/models.ts"
-    export let data: {icd10:[{id:number, title:string, code:string, connected_synonyms?:{title:string, active:boolean}[]}], search_icd10?:string, text?:string};
+    import type {Model} from "$lib/types.ts"
     let loading: boolean = false;
-    let text: string = data.text ?? '';
-    let selectedIcd10:{id:number, title:string, code:string, connected_synonyms?:{title:string, active:boolean}[]} = data.icd10[0]
-    let activeModel: string;
+    let activeModel: Model | null | undefined
     let progress: number = 0;
-    let searchIcd10: string = data.search_icd10 ?? '';
+    let text1 = ""
+    let text2 = ""
 
     async function similarityTest() {
         try{
@@ -18,61 +17,29 @@
         loading = true
         for(let model of $models) {
             let totalTime = 0;
-            let nbrOfEmbeddings = 2;
             progress = Math.round(($models.indexOf(model) / $models.length) * 100)
             console.log(model)
-            activeModel = model.name
+            activeModel = model
             $models = [...$models];
             if(!model.includeModel) continue;
 
-        console.log("text:", text)
-        console.log("icd10:", selectedIcd10.title)
-        console.log("model:", model.modelName)
-        const res = await fetch(`/api/get-embedding`, 
-        {method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({text: text === "" ? "Ont i axeln" : text, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
-        }
-        )
-        const data = await res.json();
-        totalTime += data.time;
-        model.embedding = model.modelType === "onnx-model" ? Object.values(data.embedding) : data.embedding;
-        console.log("embedding: ", data.embedding);
-        let startTime = performance.now();
-        const similarityResponse = await fetch(`/api/synonym-compare`,
-        {method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({embedding: model.embedding, text2: selectedIcd10.title , model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
-        }
-        )
-        totalTime += performance.now() - startTime;
-        const similarityData = await similarityResponse.json();
-        model.similarity = similarityData.similarity;
-        if(selectedIcd10.connected_synonyms){
-        for(let synonym of selectedIcd10.connected_synonyms){
-            if(selectedIcd10.connected_synonyms.indexOf(synonym) > 2 || synonym.title===null) break;
-            console.log("synonym: ", synonym)
-            startTime = performance.now();
-            const synonymResponse = await fetch(`/api/synonym-compare`,
-            {method: "POST",
+        let start = performance.now()
+        const res = await fetch(`/api/${activeModel.modelType}`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({embedding: model.embedding, text2: synonym.title , model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
-            }
-            )
-            totalTime += performance.now() - startTime;
-            const synonymData:{similarity:number} = await synonymResponse.json();
-            model.synonyms.push(synonymData.similarity)
-            nbrOfEmbeddings++;
-        }   
-    }
+            body: JSON.stringify({text1: text1 === "" ? "akillestendinit" : text1, text2: text2 === "" ? "hälseneinflammation" : text2, selectedModel: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false})
+        })
+        const data = await res.json()
+        model.similarity = data.similarity
+        totalTime = performance.now() - start
         model.time = Math.round(totalTime);
-        model.averageTime = Math.round(totalTime / nbrOfEmbeddings);
+        model.averageTime = Math.round(totalTime / 2);
+        const index = $models.findIndex(model => model.name === activeModel?.name);
+        if (index !== -1) {
+            $models[index] = {...model};
+        }
         $models = [...$models];
         }
         await delay(50);
@@ -84,50 +51,28 @@
             alert(err)
         }finally {
             loading = false;
-            activeModel = "";
+            activeModel = null;
             $models = [...$models];
         }
     }
     function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
     }
-    async function submit(e: Event) {
-		searchIcd10 = e.target?.search_icd10.value ?? searchIcd10;
-		window.location = `?search_icd10=${searchIcd10}&text=${text}`;
-	}
 </script>
 <div class="flex flex-col items-center gap-3 h-full w-full">
     <h1 class="text-xl font-bold">Similarity Test</h1>
-    <p>Compare similarity for search phrases accoriding to each model</p>
+    <p>Compare similarity accoriding to each model using <a class="link" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
     <div class="form-control w-full flex-col gap-3 justify-center items-center text-center ">
-        <div class="flex flex-col gap-1 w-1/3 {loading ? "opacity-50" : ""}">
-            <label for="embedding_text" class="label "><span class="label-text text-xs absolute">ICD10</span>
-            </label>
-            <select class="select select-sm relative rounded" disabled={loading} bind:value={selectedIcd10}>
-                {#each data.icd10 as icd10}
-                    <option value={icd10}>{icd10.title} {icd10.code}</option>
-                {/each}
-            </select>
-            <form
-				class="flex flex-row gap-1 items-center"
-				action="/search"
-				on:submit|preventDefault={submit}
-			>
-				<input
-					name="search_icd10"
-                    id="search_icd10"
-					type="text"
-					placeholder="Search for ICD10"
-					class="w-full form-control input input-sm rounded relative"
-					bind:value={searchIcd10}
-                    disabled={loading}
-				/>
-				<button type="submit" disabled={loading} class="btn btn-sm btn-secondary">Search</button>
-			</form>
-            <div class="flex flex-col">
-                <label for="embedding_text" class="label"><span class="label-text text-xs absolute">Search Phrase to compare</span>
+        <div class="flex flex-row gap-3 w-1/3 justify-center {loading ? "opacity-50" : ""}">
+            <div class="flex flex-col w-1/2">
+                <label for="text1" class="label"><span class="label-text text-xs absolute">Text 1</span>
                 </label>
-                <input id="embedding_text" type="text" class="input input-sm rounded relative" bind:value={text} placeholder="Ont i axeln" disabled={loading}>
+                <input id="text1" type="text" class="input input-sm rounded relative" disabled={loading} placeholder="akillestendinit" bind:value={text1}>
+            </div>
+            <div class="flex flex-col w-1/2">
+                <label for="text2" class="label"><span class="label-text text-xs absolute">Text 2</span>
+                </label>
+                <input id="text2" type="text" class="input input-sm rounded relative" bind:value={text2} placeholder="hälseneinflammation" disabled={loading}>
             </div>
         </div>
         <button class="btn btn-primary btn-sm" disabled={loading} on:click={similarityTest}>Run Test</button>
@@ -148,22 +93,17 @@
                   <th class="w-1/12">Tot. Time</th>
                   <th class="w-1/12">Avg. Time</th>
                   <th class="w-1/12">Similarity</th>
-                  <th class="w-1/12">Synonym 1</th>
-                  <th class="w-1/12">Synonym 2</th>
-                  <th class="w-1/12">Synonym 3</th>
                 </tr>
               </thead>
               <tbody>
                 {#each $models as model, i}
-                <tr class="text-xs {activeModel === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
-                  <td><input class="checkbox checkbox-xs checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel} disabled={loading}></td>
+                <tr class="text-xs {activeModel?.name === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
+                  <td class="relative"><input class="checkbox checkbox-xs checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel} disabled={loading}><span class="loading loading-spinner loading-xs text-secondary {activeModel?.name !== model.name ? "hidden" : ""}" ></span>
+                  </td>
                   <td>{model.name}</td>
                   <td>{model.time ? model.time + " ms" : ""}</td>
                   <td>{model.time ? model.averageTime + " ms" : ""}</td>
                   <td>{model.similarity ?? ""}</td>
-                  <td>{model.synonyms[0] ?? ""}</td>
-                  <td>{model.synonyms[1]  ?? ""}</td>
-                  <td>{model.synonyms[2]  ?? ""}</td>
                 </tr>
                 {/each}
             </tbody>
