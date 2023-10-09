@@ -61,7 +61,7 @@
 </script>
 <div class="flex flex-col items-center gap-3 h-full w-full">
     <h1 class="text-xl font-bold">Similarity Test</h1>
-    <p>Compare similarity accoriding to each model using <a class="link" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
+    <p>Compare similarity accoriding to each model using <a class="link" target="_blank" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
     <div class="form-control w-full flex-col gap-3 justify-center items-center text-center ">
         <div class="flex flex-row gap-3 w-1/3 justify-center {loading ? "opacity-50" : ""}">
             <div class="flex flex-col w-1/2">

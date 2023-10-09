@@ -32,7 +32,7 @@
             {/each}
         </select>
     </h1>
-    <p>Embeddings are compared using <a class="link" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
+    <p>Embeddings are compared using <a class="link" target="_blank" href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a></p>
     <div class="flex flex-row gap-3">
         <input type="text" class="input input-bordered" bind:value={text1} placeholder="Text 1">
         <input type="text" class="input input-bordered" bind:value={text2} placeholder="Text 2">
