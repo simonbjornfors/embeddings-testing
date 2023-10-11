@@ -1,6 +1,8 @@
 <script lang="ts">
     import {models} from "$lib/stores/models.ts"
+    import {cosineSimilarity} from "$lib/utils"
     import type {Model} from "$lib/types.ts"
+
     let loading: boolean = false;
     let activeModel: Model | null | undefined
     let progress: number = 0;
@@ -23,19 +25,29 @@
             $models = [...$models];
             if(!model.includeModel) continue;
 
-        let start = performance.now()
-        const res = await fetch(`/api/${activeModel.modelType}`, {
+        const Embedding1 = await fetch(`/api/get-embedding`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text1: text1 === "" ? "akillestendinit" : text1, text2: text2 === "" ? "hälseneinflammation" : text2, selectedModel: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false})
+            body: JSON.stringify({text: text1 === "" ? "akillestendinit" : text1, model: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false, modelType: activeModel.modelType})
         })
-        const data = await res.json()
-        model.similarity = data.similarity
-        totalTime = performance.now() - start
-        model.time = Math.round(totalTime);
-        model.averageTime = Math.round(totalTime / 2);
+        const embedding1Data = await Embedding1.json()
+        const Embedding2 = await fetch(`/api/get-embedding`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({text: text2 === "" ? "hälseneinflammation" : text2, model: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false, modelType: activeModel.modelType})
+        })
+        const embedding2Data = await Embedding2.json()
+        if(model.modelType === "onnx-model"){
+            console.log("embedding1Data: ", embedding1Data)
+            console.log("embedding2Data: ", embedding2Data)
+        }
+        model.similarity = cosineSimilarity(embedding1Data.embedding, embedding2Data.embedding);
+        model.time = Math.round(embedding1Data.time + embedding2Data.time);
+        model.averageTime = Math.round(embedding1Data.time + embedding2Data.time / 2);
         const index = $models.findIndex(model => model.name === activeModel?.name);
         if (index !== -1) {
             $models[index] = {...model};
@@ -76,7 +88,7 @@
             </div>
         </div>
         <button class="btn btn-primary btn-sm" disabled={loading} on:click={similarityTest}>Run Test</button>
-        <div class="radial-progress text-primary absolute {!loading ? "opacity-0" : ""}" style="--value:{progress};">{progress}%</div>
+        <div class="radial-progress text-primary absolute {!loading ? "hidden" : ""}" style="--value:{progress};">{progress}%</div>
     </div>
     <div class="flex flex-row justify-between mx-3 w-full">
         <div class="flex flex-row gap-3 ml-3">

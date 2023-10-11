@@ -1,7 +1,6 @@
 import { HfInference } from "@huggingface/inference";
 import { HF_TOKEN } from "$env/static/private";
-import { cosineSimilarity } from "$lib/utils";
-import { is1DArray } from "$lib/utils";
+import { cosineSimilarity, is1DArray, meanPooling } from "$lib/utils";
 
 const hf = new HfInference(HF_TOKEN);
 
@@ -10,27 +9,42 @@ export async function compareTexts(
   text2: string,
   model: string
 ): Promise<number> {
-  const output1: number[] = await getEmbedding(text1, model);
-  console.log("output1: ", output1);
-  const output2: number[] = await getEmbedding(text2, model);
-  console.log("output2: ", output2);
-  let similarity = 0;
-  if (is1DArray(output1) && is1DArray(output2)) {
-    similarity = cosineSimilarity(output1, output2);
+  let output1: number[] = await hf.featureExtraction({
+    inputs: "text1",
+    model: model,
+  });
+  const [result] = output1;
+  console.log("output1: ", output1.length);
+  if (Array.isArray(result)) {
+    console.log("result: ", result.length);
   }
+  if (!is1DArray(output1)) {
+    console.log("output1 is not 1D array");
+    output1 = meanPooling(result);
+  }
+
+  let output2: number[] = await getEmbedding("text2", model);
+  console.log("output2: ", output2.length);
+  const [result2] = output2;
+  if (Array.isArray(result2)) {
+    console.log("result2: ", result2.length);
+  }
+  output2 = !is1DArray(output2) ? meanPooling(result2) : output2;
+
+  let similarity = cosineSimilarity(output1, output2);
+
   return similarity;
 }
 
 export async function getEmbedding(
   text: string,
   model: string
-): Promise<number[]> {
+): Promise<number[] | number[][]> {
   const embeddingResponse = await hf.featureExtraction({
     model: model,
     inputs: text,
   });
-  if (is1DArray(embeddingResponse)) return embeddingResponse;
-  return [];
+  return embeddingResponse;
 }
 export async function computeSimilarityWithEmbedding(
   embedding: number[],

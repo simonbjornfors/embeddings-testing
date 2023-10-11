@@ -31,6 +31,7 @@ export async function POST({ request }): Promise<Response> {
     embedding = await getHuggingfaceEmbedding(text, model);
     const end = performance.now();
     console.log(`${model} took ${end - start} milliseconds.`);
+    console.log("get-embedding endpoint embedding length: ", embedding.length);
     return new Response(
       JSON.stringify({ embedding, time: Math.round(end - start) }),
       {
