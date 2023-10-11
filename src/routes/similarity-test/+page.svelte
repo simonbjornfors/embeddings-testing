@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {models} from "$lib/stores/models.ts"
+    import {models} from "$lib/stores/models"
     import {cosineSimilarity} from "$lib/utils"
     import type {Model} from "$lib/types.ts"
 
@@ -47,7 +47,7 @@
         }
         model.similarity = cosineSimilarity(embedding1Data.embedding, embedding2Data.embedding);
         model.time = Math.round(embedding1Data.time + embedding2Data.time);
-        model.averageTime = Math.round(embedding1Data.time + embedding2Data.time / 2);
+        model.averageTime = Math.round((embedding1Data.time + embedding2Data.time) / 2);
         const index = $models.findIndex(model => model.name === activeModel?.name);
         if (index !== -1) {
             $models[index] = {...model};
