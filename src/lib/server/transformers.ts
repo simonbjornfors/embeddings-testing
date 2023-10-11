@@ -18,7 +18,10 @@ export async function generateEmbeddings(
   });
 
   console.log("results[0].data: ", result[0].data.length);
-  return result[0].data;
+  const embedding = Array.isArray(result[0].data)
+    ? result[0].data
+    : Object.values(result[0].data);
+  return embedding;
 }
 
 export async function compareTexts(
