@@ -102,6 +102,18 @@ export const models: Writable<Model[]> = writable([
   {
     includeModel: true,
     time: null,
+    name: "paraphrase-xlm-r-multilingual-v1",
+    embedding: [],
+    modelName: "sentence-transformers/paraphrase-xlm-r-multilingual-v1",
+    modelType: "huggingface-model",
+    useQuantized: false,
+    similarity: null,
+    synonyms: [],
+    averageTime: null,
+  },
+  {
+    includeModel: true,
+    time: null,
     name: "all-MiniLM-L6-v2-ONNX",
     embedding: [],
     modelName: "Xenova/all-MiniLM-L6-v2",
