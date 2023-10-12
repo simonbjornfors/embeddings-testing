@@ -33,7 +33,7 @@ export async function compareTexts(
   const embeddingsModel = await pipeline("feature-extraction", model, {
     quantized: useQuantized,
   });
-  const output1 = await await embeddingsModel(text1, {
+  const output1 = await embeddingsModel(text1, {
     pooling: "mean",
     normalize: true,
   });
