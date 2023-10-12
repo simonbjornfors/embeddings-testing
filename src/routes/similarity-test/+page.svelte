@@ -30,7 +30,7 @@
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text: text1 === "" ? "akillestendinit" : text1, model: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false, modelType: activeModel.modelType})
+            body: JSON.stringify({text: text1 === "" ? "akillestendinit" : text1, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
         })
         const embedding1Data = await Embedding1.json()
         const Embedding2 = await fetch(`/api/get-embedding`, {

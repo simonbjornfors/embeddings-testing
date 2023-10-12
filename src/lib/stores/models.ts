@@ -147,4 +147,16 @@ export const models: Writable<Model[]> = writable([
     synonyms: [],
     averageTime: null,
   },
+  {
+    includeModel: true,
+    time: null,
+    name: "multilingual-e5-base-ONNX",
+    embedding: [],
+    modelName: "intfloat/multilingual-e5-base",
+    modelType: "onnx-model",
+    useQuantized: false,
+    similarity: null,
+    synonyms: [],
+    averageTime: null,
+  },
 ]);
