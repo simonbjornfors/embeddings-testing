@@ -1,7 +1,11 @@
-<script>
+<script lang="ts">
     import {models} from "$lib/stores/models.ts"
+    import type {Model} from "$lib/types.ts"
     let loading = false;
-    let text = ""
+    let text: string = ""
+    let activeModel: Model | null | undefined
+    let progress: number = 0;
+    let numberOfTests: number = 1;
 
     async function speedTest() {
         try{
@@ -9,64 +13,96 @@
             alert("Please select at least one model")
             return
         } 
+
         loading = true
-        const res = await fetch("/api/speed-test", 
-        {method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({text: text !== "" ? text : "Ej specificerad protozosjukdom i tarmen", models: $models})
-        }
-        )
-        const data = await res.json()
-        console.log(data)
-        let updatedModels = $models.map(m => {
-        let foundModel = data.find(d => d.name === m.name);
-        if (foundModel) {
-                m.time = foundModel.time;
+        for(let model of $models) {
+            let totalTime = 0;
+            progress = Math.round(($models.indexOf(model) / $models.length) * 100)
+            console.log(model)
+            activeModel = model
+            $models = [...$models];
+            if(!model.includeModel) continue;
+            for(let i = 0; i < numberOfTests; i++) {
+                const Embedding1 = await fetch(`/api/get-embedding`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({text: text === "" ? "Ej specificerad protozosjukdom i tarmen" : text, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
+                })
+                const embedding1Data = await Embedding1.json()
+                totalTime += embedding1Data.time;
             }
-            return m;
-        });
-        $models = updatedModels;
-        loading = false}
+            model.time = Math.round(totalTime);
+            model.averageTime = Math.round(totalTime / numberOfTests);
+        const index = $models.findIndex(model => model.name === activeModel?.name);
+        if (index !== -1) {
+            $models[index] = {...model};
+        }
+        $models = [...$models];
+        }
+        await delay(50);
+        loading = false
+    }
         catch(err) {
             loading = false
             console.log(err)
             alert(err)
         }finally {
             loading = false;
+            activeModel = null;
+            $models = [...$models];
         }
+    }
+    function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
     }
 </script>
 <div class="flex flex-col items-center gap-3 h-full">
     <h1 class="text-xl font-bold">Speed Test</h1>
     <p>Test how long different models take to create an embedding</p>
-    <div class="flex flex-col h-1/2 flex-wrap gap-3 w-[75%]">
-        {#each $models as model}
-        <div class="flex flex-col gap-1">
-            <div class="flex flex-row justify-between items-center mx-2">
-                <label class="label" for={model.name}><span class="label-text text-xl font-bold">{model.name}</span></label>
-                <input class="checkbox checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel}>
-            </div>
-            <div class="flex flex-row relative">
-                
-            
-            <input disabled class="input w-full" type="text" id={model.name + "-time"} name={model.name + "-time"} bind:value={model.time}>
-            <label class="label" for={model.name + "-time"}>
-            <span class="absolute right-3 loading loading-spinner loading-xs text-primary" class:hidden={!loading || !model.includeModel}></span></label>
+    <div class="flex flex-row gap-3 justify-center items-center text-center">
+        <div class="form-control w-full max-w-xs {loading ? "opacity-50" : ""}">
+            <label for="embedding-text" class="label"><span class="label-text text-xs absolute">Embedding Text</span></label>
+            <input id="embedding-text" type="text" class="input input-bordered input-sm" bind:value={text} placeholder="Ej specificerad protozosjukdom i tarmen" disabled={loading}>
         </div>
+        <div class="form-control w-full max-w-xs {loading ? "opacity-50" : ""}">
+            <label for="number-of-tests" class="label"><span class="label-text text-xs absolute">Number of tests</span></label>
+            <input id="number-of-tests" type="number" class="input input-bordered input-sm" bind:value={numberOfTests} placeholder="Number of tests" disabled={loading}>
         </div>
-        {/each}
-        
+        <div class="radial-progress text-primary absolute {!loading ? "hidden" : ""}" style="--value:{progress};">{progress}%</div>
     </div>
-    <div class="flex flex-row gap-3">
-        <button class="btn btn-primary" on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>Select All</button>
-        <button class="btn btn-secondary" on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>Deselect All</button>
+    <button class="btn btn-primary btn-sm" on:click={speedTest} disabled={loading}>Speed Test</button>
+
+    <div class="flex flex-row justify-between mx-3 w-full">
+        <div class="flex flex-row gap-3 ml-3">
+            <button class="btn btn-xs btn-primary" disabled={loading} on:click={() => { $models.forEach(model => model.includeModel = true); $models = [...$models]; }}>All</button>
+            <button class="btn btn-xs btn-secondary" disabled={loading} on:click={() => { $models.forEach(model => model.includeModel = false); $models = [...$models]; }}>None</button>
+        </div>
     </div>
-    <div class="form-control w-full max-w-xs">
-        <label for="embedding-text" class="label"><span class="label-text text-xs">Embedding Text</span></label>
-        <input id="embedding-text" type="text" class="input input-bordered" bind:value={text} placeholder="Ej specificerad protozosjukdom i tarmen">
+    <div class="w-full">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th class="w-1/12"></th>
+                  <th class="w-1/12">Model</th>
+                  <th class="w-1/12">Tot. Time</th>
+                  <th class="w-1/12">Avg. Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each $models as model, i}
+                <tr class="text-xs {activeModel?.name === model.name ? "bg-accent text-accent-content" : i % 2 === 0 ? "bg-base-200" : ""}">
+                  <td class="relative"><input class="checkbox checkbox-xs checkbox-primary" type="checkbox" id={model.name} name="model" bind:checked={model.includeModel} disabled={loading}><span class="loading loading-spinner loading-xs text-secondary {activeModel?.name !== model.name ? "hidden" : ""}" ></span>
+                  </td>
+                  <td>{model.name}</td>
+                  <td>{model.time ? model.time + " ms" : ""}</td>
+                  <td>{model.time ? model.averageTime + " ms" : ""}</td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
     </div>
-    <button class="btn btn-primary" on:click={speedTest}>Speed Test</button>
+
 </div>
 
