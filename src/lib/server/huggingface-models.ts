@@ -10,7 +10,7 @@ export async function compareTexts(
   model: string
 ): Promise<number> {
   let output1: number[] = await hf.featureExtraction({
-    inputs: "text1",
+    inputs: text1,
     model: model,
   });
   const [result] = output1;
@@ -23,7 +23,7 @@ export async function compareTexts(
     output1 = meanPooling(result);
   }
 
-  let output2: number[] = await getEmbedding("text2", model);
+  let output2: number[] = await getEmbedding(text2, model);
   console.log("output2: ", output2.length);
   const [result2] = output2;
   if (Array.isArray(result2)) {
