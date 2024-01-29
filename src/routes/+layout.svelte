@@ -12,6 +12,7 @@
         <li><a class="btn btn-ghost" href="/">Speed Test</a></li>
         <li><a class="btn btn-ghost" href="/text-comparison">Text Comparison</a></li>
         <li><a class="btn btn-ghost" href="/similarity-test">Similarity Test</a></li>
+        <li><a class="btn btn-ghost" href="/similarity-delta-test">Similarity Delta Test</a></li>
       </ul>
     </div>
   </nav>
