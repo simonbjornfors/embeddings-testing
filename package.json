@@ -13,7 +13,7 @@
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.20.4",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^3.7.7",
+    "daisyui": "^4.6.0",
     "postcss": "^8.4.24",
     "postcss-load-config": "^4.0.1",
     "svelte": "^4.0.5",
@@ -28,6 +28,7 @@
     "@huggingface/inference": "^2.6.1",
     "@vercel/postgres": "^0.5.0",
     "@xenova/transformers": "^2.6.2",
+    "cohere-ai": "^7.7.3",
     "openai": "^4.10.0"
   }
 }
