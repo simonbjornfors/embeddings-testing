@@ -25,9 +25,10 @@ export function cosineSimilarity(
     a_single_dimension = a as number[];
     b_single_dimension = b as number[];
   }
-  console.log("a length: ", a.length);
-  console.log("b length: ", b.length);
-  if (a.length !== b.length) throw new Error("Vectors must be of same length");
+  if (a.length !== b.length)
+    throw new Error(
+      `Vectors must be of same length a length: ${a.length} b length: ${b.length}`
+    );
   return (
     dotProduct(a_single_dimension, b_single_dimension) /
     (magnitude(a_single_dimension) * magnitude(b_single_dimension))
