@@ -8,7 +8,15 @@ const config = {
 
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["halloween"],
+    themes: [
+      "default",
+      "light",
+      "dark",
+      "retro",
+      "cyberpunk",
+      "valentine",
+      "aqua",
+    ],
   },
 };
 
