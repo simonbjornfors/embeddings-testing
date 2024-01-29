@@ -9,4 +9,9 @@ export type Model = {
   similarity: number | null | undefined;
   synonyms: number[] | null | undefined;
   averageTime: number | null | undefined;
+  dimensions?: number | null | undefined;
+};
+export type prompt = {
+  prompt: string;
+  expected: string;
 };
