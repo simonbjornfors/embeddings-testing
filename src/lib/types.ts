@@ -10,8 +10,16 @@ export type Model = {
   synonyms: number[] | null | undefined;
   averageTime: number | null | undefined;
   dimensions?: number | null | undefined;
+  matchSimilarity?: number | null | undefined;
+  nonMatchSimilarity?: number | null | undefined;
+  delta?: number | null | undefined;
 };
 export type prompt = {
-  prompt: string;
+  text: string;
+  embedding: number[] | number[][] | null | undefined;
   expected: string;
+};
+export type icd10 = {
+  text: string;
+  embedding: number[] | number[][] | null | undefined;
 };
