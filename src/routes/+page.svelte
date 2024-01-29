@@ -28,7 +28,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({text: text === "" ? "Ej specificerad protozosjukdom i tarmen" : text, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
+                    body: JSON.stringify({text: text === "" ? "Ej specificerad protozosjukdom i tarmen" : text, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType, dimensions: model.dimensions ?? undefined})
                 })
                 const embedding1Data = await Embedding1.json()
                 totalTime += embedding1Data.time;

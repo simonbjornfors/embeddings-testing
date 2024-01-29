@@ -30,7 +30,7 @@
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text: text1 === "" ? "akillestendinit" : text1, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType})
+            body: JSON.stringify({text: text1 === "" ? "akillestendinit" : text1, model: model.modelName, useQuantized: model.useQuantized ?? false, modelType: model.modelType, dimensions: model.dimensions ?? undefined})
         })
         const embedding1Data = await Embedding1.json()
         const Embedding2 = await fetch(`/api/get-embedding`, {
@@ -38,10 +38,10 @@
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text: text2 === "" ? "hälseneinflammation" : text2, model: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false, modelType: activeModel.modelType})
+            body: JSON.stringify({text: text2 === "" ? "hälseneinflammation" : text2, model: activeModel.modelName, useQuantized: activeModel.useQuantized ?? false, modelType: activeModel.modelType, dimensions: model.dimensions ?? undefined})
         })
         const embedding2Data = await Embedding2.json()
-        if(model.modelType === "onnx-model"){
+        if(model.modelType === "onnx-model" || model.modelType === "cohere"){
             console.log("embedding1Data: ", embedding1Data)
             console.log("embedding2Data: ", embedding2Data)
         }

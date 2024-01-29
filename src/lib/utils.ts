@@ -12,11 +12,26 @@ export function is1DArray<T>(value: (T | T[] | T[][])[]): value is T[] {
 export function magnitude(a: number[]): number {
   return Math.sqrt(dotProduct(a, a));
 }
-export function cosineSimilarity(a: number[], b: number[]): number {
+export function cosineSimilarity(
+  a: number[] | number[][],
+  b: number[] | number[][]
+): number {
+  let a_single_dimension: number[] = [];
+  let b_single_dimension: number[] = [];
+  if (!is1DArray(a) && !is1DArray(b)) {
+    a_single_dimension = meanPooling(a);
+    b_single_dimension = meanPooling(b);
+  } else {
+    a_single_dimension = a as number[];
+    b_single_dimension = b as number[];
+  }
   console.log("a length: ", a.length);
   console.log("b length: ", b.length);
   if (a.length !== b.length) throw new Error("Vectors must be of same length");
-  return dotProduct(a, b) / (magnitude(a) * magnitude(b));
+  return (
+    dotProduct(a_single_dimension, b_single_dimension) /
+    (magnitude(a_single_dimension) * magnitude(b_single_dimension))
+  );
 }
 export function meanPooling(embeddings: number[][]): number[] {
   if (embeddings.length === 0) return [];
